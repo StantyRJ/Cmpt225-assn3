@@ -57,13 +57,23 @@ int main(int argc, char *argv[]) {
         aLine.erase(0, pos + delimiter.length());
         translationW = aLine;
         WordPair aWordPair(englishW, translationW);
+                
         // insert aWordPair into "testing" using a try/catch block
+        try
+        {
+         testing->insert(aWordPair);
+        }
+        catch(const std::exception& e)
+        {
+         std::cerr << e.what() << '\n';
+        }
      }
      myfile.close();
 
      // If user entered "display" at the command line ...
      if ( ( argc > 1 ) && ( strcmp(argv[1], "display") == 0) ) {
         // ... then display the content of the BST.
+        testing->traverseInOrder(display);
      }
      else if (argc == 1) {
         // while user has not entered CTRL+D
@@ -71,8 +81,15 @@ int main(int argc, char *argv[]) {
 
            WordPair aWordPair(aWord);
            // retrieve aWordPair from "testing" using a try/catch block
-           // print aWordPair
-
+           try
+           {
+               WordPair retreived = testing->retrieve(aWordPair);
+               cout << retreived;
+           }
+           catch(const std::exception& e)
+           {
+            std::cerr << e.what() << '\n';
+           }
         }
      }
   }

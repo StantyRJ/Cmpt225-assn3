@@ -30,15 +30,42 @@ using std::endl;
 
    // Copy constructor
    BST::BST(const BST & aBST) {
-     
-	  // to do
+      root = copyR(aBST.root);
+      elementCount = aBST.elementCount;
+   }
+
+   BSTNode * BST::copyR(BSTNode * theirCurrent)
+   {
+      if(theirCurrent == nullptr)
+         return nullptr;
+
+      BSTNode * copyNode = new BSTNode;
+      copyNode->element = theirCurrent->element;
+      copyNode->left = copyR(theirCurrent->left);
+      copyNode->right = copyR(theirCurrent->right); 
+
+      
+      return copyNode;     
    }
 
    // Destructor 
    BST::~BST() {
+      deleteR(root);
+   }   
 
-      // to do
-   }                
+   void BST::deleteR(BSTNode * current)      
+   {
+      if(current == nullptr)
+         return;
+
+      deleteR(current->left);
+
+      deleteR(current->right);  
+
+      delete current;
+      return;
+         
+   }
    
    
 /* Getters and setters */
@@ -46,8 +73,7 @@ using std::endl;
    // Description: Returns the number of elements currently stored in the binary search tree.   
    // Time efficiency: O(1)   
    unsigned int BST::getElementCount() const {     
-
-     return this->elementCount;
+      return elementCount;
    }
    
 
@@ -62,18 +88,56 @@ using std::endl;
    //            if "newElement" already exists in the binary search tree.
    // Time efficiency: O(log2 n)   
    void BST::insert(WordPair & newElement) {
-  
-      // to do
-	  
+      BSTNode * newNode = new BSTNode(newElement,nullptr,nullptr);
+      if(newNode)
+      {
+         if(root != nullptr)
+         {
+            bool i = insertR(newNode,root);
+            if(!i)
+               throw UnableToInsertException("failed to insert");
+            else
+               elementCount++;
+         }
+         else
+            root = newNode;
+      }
+      else
+      {
+         throw UnableToInsertException("new failed");
+      }	  
    } 
 
    // Description: Recursive insertion into a binary search tree.
    //              Returns true when "anElement" has been successfully inserted into the 
    //              binary search tree. Otherwise, returns false.
    bool BST::insertR(BSTNode * newBSTNode, BSTNode * current) {  
-    
-	  // to do
-		
+      bool inserted = false;
+      if(current->element == newBSTNode->element)
+      {
+         return false;
+      }
+      else if(current->element > newBSTNode->element)
+      {
+         if(current->left != nullptr)
+            inserted = insertR(newBSTNode,current->left);
+         else 
+         {
+            current->left = newBSTNode;
+            return true;
+         }
+      }
+      else
+      {
+         if(current->right != nullptr)
+            inserted = insertR(newBSTNode,current->right);
+         else 
+         {
+            current->right = newBSTNode;
+            return true;
+         }
+      }
+      return inserted;
    }
 
    
@@ -101,8 +165,29 @@ using std::endl;
    //            if "targetElement" is not found in the binary search tree.
    WordPair& BST::retrieveR(WordPair & targetElement, BSTNode * current) const {
 
-	  // to do
-		
+	  if(current->element == targetElement)
+     {
+         return current->element;
+     }
+     else if(current->element < targetElement)
+     {
+         if(current->right != nullptr)
+            retrieveR(targetElement,current->right);
+         else
+         {
+            throw ElementDoesNotExistException("target element not found inside BST");
+         }
+     }
+      else if(current->element > targetElement)
+     {
+         if(current->left != nullptr)
+            retrieveR(targetElement,current->left);
+         else
+         {
+            throw ElementDoesNotExistException("target element not found inside BST");
+         }
+     }
+      throw ElementDoesNotExistException("Element not found");
    } 
          
    
@@ -125,7 +210,12 @@ using std::endl;
 
    // Description: Recursive in order traversal of a binary search tree.   
    void BST::traverseInOrderR(void visit(WordPair &), BSTNode* current) const { 
-   
-	  // to do
-	  
+      if(current == nullptr)
+         return;
+
+      traverseInOrderR(visit, current->left);
+      traverseInOrderR(visit, current->right);
+
+      visit(current->element);
+      return;
    }

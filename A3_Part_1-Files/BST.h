@@ -33,6 +33,9 @@ private:
    /* Utility methods */
    
    // Feel free to add private methods to this class.
+   void deleteR(BSTNode * current);
+
+   BSTNode * copyR(BSTNode * theirCurrent);
    
    // Description: Recursive insertion into a binary search tree.
    //              Returns true when "anElement" has been successfully inserted into the 
